@@ -6,7 +6,7 @@
 /*   By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/21 18:47:11 by iouardi           #+#    #+#             */
-/*   Updated: 2022/05/22 03:25:56 by iouardi          ###   ########.fr       */
+/*   Updated: 2022/05/22 19:02:27 by iouardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,67 @@ void	pwd_command()
 		printf("%s\n", buffer);//don't forget to check in case of an error
 }
 
+void	print_export_env(t_env *env)
+{
+	t_env	*tmp;
+
+	tmp = env;
+	while (tmp)
+	{
+		printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
+		tmp = tmp->next;
+	}
+}
+
+char	**split_name_value(char	*arg)
+{
+	char	**arr;
+
+	arr = ft_split(arg, '=');
+	return (arr);
+}
+
+int	parse_args(char *var)
+{
+	int		i;
+
+	if (!ft_isalpha(var[0]) && var[0] != '_')
+	{
+		//dont forget to parse if there's no = in the args
+		printf("bash: export: `%s': not a valid identifier\n", var);
+		return (0);
+	}
+	i = 1;
+	while (var[i])
+	{
+		if (!ft_isalnum(var[i]) && var[i] != '_')
+		{
+			printf("bash: export: `%s': not a valid identifier\n", var);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
+void	export_command(char **arr, t_env *env)
+{
+	int		i;
+	char	**arg_splited;
+
+	i = 1;
+	while (arr[i])
+	{
+		arg_splited = split_name_value(arr[i]);
+		if (!parse_args(arg_splited[0]))
+			return ;
+		add_back(&env, new_node(arg_splited[0], arg_splited[1]));
+		i++;
+	}
+	if (!arr[1])
+		print_export_env(env);
+}
+
 void	execute_commands(t_data	*data)
 {
 	if (!ft_strncmp(data->f_list->arr[0], "echo", 5))
@@ -103,4 +164,6 @@ void	execute_commands(t_data	*data)
 		cd_command(data->f_list->arr, data->env);
 	if (!ft_strncmp(data->f_list->arr[0], "pwd", 4))
 		pwd_command();
+	if (!ft_strncmp(data->f_list->arr[0], "export", 7))
+		export_command(data->f_list->arr, data->env);
 }

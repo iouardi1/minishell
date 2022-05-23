@@ -6,7 +6,7 @@
 /*   By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/16 00:07:52 by slahrach          #+#    #+#             */
-/*   Updated: 2022/05/22 17:14:09 by iouardi          ###   ########.fr       */
+/*   Updated: 2022/05/23 02:32:27 by iouardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,23 @@ void	env_add_change(t_env **env, char *name, char *value)
 		copy = copy->next;
 	}
 	add_back(env, new_node(name, value));
+}
+
+void	env_add_change1(t_env **env, char *name, char *value)
+{
+	t_env	*copy;
+
+	copy = *env;
+	while (copy)
+	{
+		if (!ft_strcmp(name, copy->name))
+		{
+			free(copy->value);
+			copy->value = value;
+		}
+		copy = copy->next;
+	}
+	// add_back(env, new_node(name, value));
 }
 
 void	unset_node(t_env **env, char *name)

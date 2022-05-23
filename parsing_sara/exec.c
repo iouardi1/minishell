@@ -6,7 +6,7 @@
 /*   By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/21 18:47:11 by iouardi           #+#    #+#             */
-/*   Updated: 2022/05/22 19:02:27 by iouardi          ###   ########.fr       */
+/*   Updated: 2022/05/23 03:36:24 by iouardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,10 @@ void	print_export_env(t_env *env)
 	tmp = env;
 	while (tmp)
 	{
-		printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
+		if (!tmp->value)
+			printf("declare -x %s\n", tmp->name);
+		else			
+			printf("declare -x %s=\"%s\"\n", tmp->name, tmp->value);
 		tmp = tmp->next;
 	}
 }
@@ -121,7 +124,6 @@ int	parse_args(char *var)
 
 	if (!ft_isalpha(var[0]) && var[0] != '_')
 	{
-		//dont forget to parse if there's no = in the args
 		printf("bash: export: `%s': not a valid identifier\n", var);
 		return (0);
 	}
@@ -138,6 +140,42 @@ int	parse_args(char *var)
 	return (1);
 }
 
+int	already_exists(char **arg, t_env *env)
+{
+	t_env	*tmp;
+	
+	tmp = env;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->name, arg[0]))
+		{
+			if (!arg[1] && !tmp->value)
+			{
+				printf("----------------env->value%s\n", tmp->value);
+				return (1);
+			}
+			else if (!ft_strcmp(tmp->value, arg[1]))
+					return (1);
+		}
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
+int	already_exists_modified_value(char **arg, t_env *env)
+{
+	t_env	*tmp;
+
+	tmp = env;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->name, arg[0]) && ft_strcmp(tmp->value, arg[1]))
+			return (1);
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
 void	export_command(char **arr, t_env *env)
 {
 	int		i;
@@ -149,8 +187,12 @@ void	export_command(char **arr, t_env *env)
 		arg_splited = split_name_value(arr[i]);
 		if (!parse_args(arg_splited[0]))
 			return ;
-		add_back(&env, new_node(arg_splited[0], arg_splited[1]));
-		i++;
+		if (!already_exists(arg_splited, env))
+			add_back(&env, new_node(arg_splited[0], arg_splited[1]));
+		else if (!already_exists_modified_value(arg_splited, env))
+				env_add_change1(&env, arg_splited[0], arg_splited[1]);
+		else
+			i++;
 	}
 	if (!arr[1])
 		print_export_env(env);

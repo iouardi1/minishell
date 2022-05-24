@@ -6,7 +6,7 @@
 /*   By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/21 18:47:11 by iouardi           #+#    #+#             */
-/*   Updated: 2022/05/23 03:36:24 by iouardi          ###   ########.fr       */
+/*   Updated: 2022/05/24 21:51:22 by iouardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,13 +149,17 @@ int	already_exists(char **arg, t_env *env)
 	{
 		if (!ft_strcmp(tmp->name, arg[0]))
 		{
-			if (!arg[1] && !tmp->value)
+			if (tmp->value && arg[1])
 			{
-				printf("----------------env->value%s\n", tmp->value);
-				return (1);
-			}
-			else if (!ft_strcmp(tmp->value, arg[1]))
+				if (!ft_strcmp(tmp->value, arg[1]))
 					return (1);
+				else
+					return (2);
+			}
+			else if ((!tmp->value && !arg[1]) ||(!arg[1] && tmp->value))
+				return (1);
+			else if (arg[1] && !tmp->value)
+				return (2);
 		}
 		tmp = tmp->next;
 	}
@@ -169,8 +173,11 @@ int	already_exists_modified_value(char **arg, t_env *env)
 	tmp = env;
 	while (tmp)
 	{
+		printf("tmp->value ====== %s\n", tmp->value);
 		if (!ft_strcmp(tmp->name, arg[0]) && ft_strcmp(tmp->value, arg[1]))
+		{
 			return (1);
+		}
 		tmp = tmp->next;
 	}
 	return (0);
@@ -182,6 +189,11 @@ void	export_command(char **arr, t_env *env)
 	char	**arg_splited;
 
 	i = 1;
+	if (!arr[1])
+	{
+		print_export_env(env);
+		return ;
+	}
 	while (arr[i])
 	{
 		arg_splited = split_name_value(arr[i]);
@@ -189,23 +201,20 @@ void	export_command(char **arr, t_env *env)
 			return ;
 		if (!already_exists(arg_splited, env))
 			add_back(&env, new_node(arg_splited[0], arg_splited[1]));
-		else if (!already_exists_modified_value(arg_splited, env))
+		else if (already_exists(arg_splited, env) == 2)
 				env_add_change1(&env, arg_splited[0], arg_splited[1]);
-		else
-			i++;
+		i++;
 	}
-	if (!arr[1])
-		print_export_env(env);
 }
 
 void	execute_commands(t_data	*data)
 {
-	if (!ft_strncmp(data->f_list->arr[0], "echo", 5))
+	if (!ft_strcmp(data->f_list->arr[0], "echo"))
 		echo_command(data->f_list->arr);
-	if (!ft_strncmp(data->f_list->arr[0], "cd", 3))
+	if (!ft_strcmp(data->f_list->arr[0], "cd"))
 		cd_command(data->f_list->arr, data->env);
-	if (!ft_strncmp(data->f_list->arr[0], "pwd", 4))
+	if (!ft_strcmp(data->f_list->arr[0], "pwd"))
 		pwd_command();
-	if (!ft_strncmp(data->f_list->arr[0], "export", 7))
+	if (!ft_strcmp(data->f_list->arr[0], "export"))
 		export_command(data->f_list->arr, data->env);
 }

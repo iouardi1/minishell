@@ -6,7 +6,7 @@
 /*   By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/20 05:45:06 by slahrach          #+#    #+#             */
-/*   Updated: 2022/05/23 03:13:34 by iouardi          ###   ########.fr       */
+/*   Updated: 2022/05/24 20:54:04 by iouardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_data
 	char		*line;
 	t_list		*list;
 	t_list		*f_list;
-	char		**arr_env;
+	// char		**arr_env;
 	t_env		*env;
 }	t_data;
 

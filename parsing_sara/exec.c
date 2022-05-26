@@ -6,7 +6,7 @@
 /*   By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/21 18:47:11 by iouardi           #+#    #+#             */
-/*   Updated: 2022/05/24 21:51:22 by iouardi          ###   ########.fr       */
+/*   Updated: 2022/05/26 00:40:39 by iouardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,32 +151,15 @@ int	already_exists(char **arg, t_env *env)
 		{
 			if (tmp->value && arg[1])
 			{
-				if (!ft_strcmp(tmp->value, arg[1]))
+				if (!ft_strcmp(tmp->value, arg[1]) && arg[1][0] != '\0')
 					return (1);
 				else
 					return (2);
 			}
-			else if ((!tmp->value && !arg[1]) ||(!arg[1] && tmp->value))
+			else if ((!tmp->value && !arg[1]) || (!arg[1] && tmp->value))
 				return (1);
-			else if (arg[1] && !tmp->value)
+			else if ((arg[1] && !tmp->value) || (arg[1][0] == '\0' && !tmp->value))
 				return (2);
-		}
-		tmp = tmp->next;
-	}
-	return (0);
-}
-
-int	already_exists_modified_value(char **arg, t_env *env)
-{
-	t_env	*tmp;
-
-	tmp = env;
-	while (tmp)
-	{
-		printf("tmp->value ====== %s\n", tmp->value);
-		if (!ft_strcmp(tmp->name, arg[0]) && ft_strcmp(tmp->value, arg[1]))
-		{
-			return (1);
 		}
 		tmp = tmp->next;
 	}
@@ -197,6 +180,7 @@ void	export_command(char **arr, t_env *env)
 	while (arr[i])
 	{
 		arg_splited = split_name_value(arr[i]);
+		printf("---------arg_splited = %s\n", arg_splited[1]);
 		if (!parse_args(arg_splited[0]))
 			return ;
 		if (!already_exists(arg_splited, env))
@@ -204,6 +188,24 @@ void	export_command(char **arr, t_env *env)
 		else if (already_exists(arg_splited, env) == 2)
 				env_add_change1(&env, arg_splited[0], arg_splited[1]);
 		i++;
+	}
+}
+
+void	env_command(char **arr, t_env *env)
+{
+	int		i;
+	t_env	*tmp;
+	
+	i = 1;
+	tmp = env;
+	if (!arr[1])
+	{
+		while (tmp)
+		{
+			if (tmp->value)
+				printf("%s=%s\n", tmp->name, tmp->value);
+			tmp = tmp->next;
+		}
 	}
 }
 
@@ -217,4 +219,6 @@ void	execute_commands(t_data	*data)
 		pwd_command();
 	if (!ft_strcmp(data->f_list->arr[0], "export"))
 		export_command(data->f_list->arr, data->env);
+	if (!ft_strcmp(data->f_list->arr[0], "env"))
+		env_command(data->f_list->arr, data->env);
 }

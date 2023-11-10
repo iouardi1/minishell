@@ -6,7 +6,7 @@
 /*   By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/16 00:07:52 by slahrach          #+#    #+#             */
-/*   Updated: 2022/07/22 17:30:47 by iouardi          ###   ########.fr       */
+/*   Updated: 2022/07/19 23:54:05 by iouardi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,6 @@ void	env_add_change1(t_env **env, char *name, char *value, int flag)
 			if (value && copy->value && ft_strcmp(copy->value, value))
 			{
 				free(copy->value);
-				copy->value = ft_strdup(value);
-				copy->flag = flag;
-				return ;
-			}
-			else if (!copy->value && value)
-			{
 				copy->value = ft_strdup(value);
 				copy->flag = flag;
 				return ;

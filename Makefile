@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iouardi <iouardi@student.42.fr>            +#+  +:+       +#+         #
+#    By: slahrach <slahrach@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/20 05:51:28 by slahrach          #+#    #+#              #
-#    Updated: 2022/07/22 17:31:17 by iouardi          ###   ########.fr        #
+#    Updated: 2022/07/20 23:42:36 by slahrach         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ OBJS = ${SRCS:.c=.o}
 ${NAME} : ${OBJS}
 		@make -C libft
 		@cp libft/libft.a ./
-		gcc -g $(CFLAGS) ${OBJS} ${LIB} -o ${NAME} -lreadline -L /Users/iouardi/.brew/opt/readline/lib -I /Users/iouardi/.brew/opt/readline/include #-fsanitize=address
+		gcc -g $(CFLAGS) ${OBJS} ${LIB} -o ${NAME} -lreadline -L /Users/slahrach/.brew/opt/readline/lib -I /Users/slahrach/.brew/opt/readline/include #-fsanitize=address
 
 all : ${NAME}
 
@@ -61,6 +61,6 @@ fclean : clean
 re : fclean all
 
 %.o : %.c
-	${CC} $(CFLAGS) -g -I /Users/iouardi/.brew/opt/readline/include -c $<
+	${CC} $(CFLAGS) -g -I /Users/slahrach/.brew/opt/readline/include -c $<
 
 .PHONY: clean all fclean re
